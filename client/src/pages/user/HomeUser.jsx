@@ -1,12 +1,12 @@
 // rafce
 import React from 'react'
 
-const Category = () => {
+const HomeUser = () => {
   return (
     <div>
-      Category
+      HomeUser
     </div>
   )
 }
 
-export default Category
+export default HomeUser
