@@ -1,10 +1,11 @@
 // rafce
 import React from 'react'
+import FormCategory from '../../components/admin/FormCategory'
 
 const Category = () => {
   return (
     <div>
-      Category
+      <FormCategory />
     </div>
   )
 }
