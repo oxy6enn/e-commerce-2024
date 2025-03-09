@@ -4,11 +4,13 @@ const router = express.Router()
 
 // import controllers 
 const { register,login,currentUser } = require('../controllers/auth')
+// import Middleware
+const { authCheck, adminCheck } = require('../middlewares/authCheck')
 
 // endpoints http://localhost:5001/api/...
 router.post('/register',register)
 router.post('/login',login)
-router.post('/current-user',currentUser)
-router.post('/current-admin',currentUser)
+router.post('/current-user',authCheck,currentUser)
+router.post('/current-admin',authCheck,adminCheck,currentUser)
 
 module.exports = router

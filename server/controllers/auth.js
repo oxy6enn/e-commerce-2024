@@ -90,7 +90,18 @@ exports.login = async (req, res) => {
 exports.currentUser = async (req, res) => {
     try {
         //
-        res.send('Hello Current User In Controller')
+        const user = await prisma.user.findFirst({
+            where : {
+                email : req.user.email
+            },
+            select : {
+                id : true,
+                email : true,
+                name : true,
+                role : true
+            }
+        })
+        res.send({user})
     } catch (err) {
         //err
         console.log(err)
