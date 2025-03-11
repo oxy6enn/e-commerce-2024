@@ -17,3 +17,16 @@ export const listProduct = async (token, count = 20) => {
     },
   });
 };
+
+
+export const uploadFiles = async (token, form) => {
+  // code
+  
+  return axios.post("http://localhost:5001/api/images", {
+    image: form
+  }, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

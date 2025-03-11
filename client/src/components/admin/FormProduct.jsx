@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import useEcomStore from "../../store/ecom-store";
 import { createProduct } from "../../api/product";
 import { toast } from "react-toastify";
+import Uploadfile from "./Uploadfile";
 
 const initialState = {
   title: "Keyboard",
@@ -20,9 +21,9 @@ const FormProduct = () => {
   const categories = useEcomStore((state) => state.categories);
   const getProduct = useEcomStore((state) => state.getProduct);
   const products = useEcomStore((state) => state.products);
-  console.log(products);
+  // console.log(products);
 
-  const [form, setForm] = useState('');
+  const [form, setForm] = useState(initialState);
 
   useEffect(() => {
     //code
@@ -38,7 +39,7 @@ const FormProduct = () => {
     e.preventDefault();
     try {
       const res = await createProduct(token, form);
-      console.log(res);
+      // console.log(res);
       toast.success(`เพิ่มข้อมูล ${res.data.title} สำเร็จ`);
     } catch (err) {
       console.log(err);
@@ -87,7 +88,7 @@ const FormProduct = () => {
           required
           value={form.categoryId}
         >
-          <option value="" disabled>
+          <option value="" >
             Please Select
           </option>
           {categories.map((item, index) => (
@@ -97,7 +98,12 @@ const FormProduct = () => {
           ))}
         </select>
         <hr />
+
+          {/* uploadfile */}
+          <Uploadfile form={form} setForm={setForm} />
+
         <button className="bg-blue-500">เพิ่มสินค้า</button>
+
         <br />
         <hr />
         <br />
@@ -117,17 +123,16 @@ const FormProduct = () => {
           </thead>
           <tbody>
             {products.map((item, index) => {
-              console.log(products);
+              // console.log(products);
               return (
-                <tr>
+                <tr key={index}>
                   <th scope="row">{index + 1}</th>
                   <td>{item.title}</td>
                   <td>{item.description}</td>
                   <td>{item.price}</td>
                   <td>{item.quantity}</td>
                   <td>{item.sold}</td>
-                  <td>{item.updatedAt}</td>
-                  <td>{item.updatedAt}</td>
+                  {/* <td>{item.updatedAt}</td> */}
                   <td>
                     <p>แก้ไข</p>
                   </td>
@@ -135,10 +140,11 @@ const FormProduct = () => {
                     <p>ลบ</p>
                   </td>
                 </tr>
-              );
+              )
             })}
           </tbody>
         </table>
+        
       </form>
     </div>
   );
