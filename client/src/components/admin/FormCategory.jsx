@@ -13,37 +13,15 @@ const FormCategory = () => {
   // javascript
   const token = useEcomStore((state) => state.token);
   const [name, setName] = useState("");
-  const [categoies, setCategories] = useState([]);
+  // const [categoies, setCategories] = useState([]);
+  const categories = useEcomStore((state) => state.categories);
+  const getCategory = useEcomStore((state) => state.getCategory);
 
   useEffect(() => {
     getCategory(token);
   }, []);
 
-  // delete category
-  const handleRemove = async (id) => {
-    //code
-    console.log(id);
-    try{
-      const res = await removeCategory(token,id)
-      console.log(res)
-      toast.success(`Deleted Category ${res.data.name} Success!!!`)
-      getCategory(token)
-    }catch(err){
-      console.log(err)
-    }
-  };
-
-  // get category
-  const getCategory = async (token) => {
-    try {
-      const res = await listCategory(token);
-      setCategories(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // submit category
+  // add category
   const handleSubmit = async (e) => {
     //code
     e.preventDefault();
@@ -54,6 +32,20 @@ const FormCategory = () => {
       const res = await createCategory(token, { name });
       console.log(res.data.name);
       toast.success(`Add Category ${res.data.name} Success!!!`);
+      getCategory(token);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // delete category
+  const handleRemove = async (id) => {
+    //code
+    console.log(id);
+    try {
+      const res = await removeCategory(token, id);
+      console.log(res);
+      toast.success(`Deleted Category ${res.data.name} Success!!!`);
       getCategory(token);
     } catch (err) {
       console.log(err);
@@ -74,7 +66,7 @@ const FormCategory = () => {
 
       <hr />
       <ul className="list-none">
-        {categoies.map((item, index) => (
+        {categories.map((item, index) => (
           <li key={index} className="flex justify-between my-2">
             <span>{item.name}</span>
             <button

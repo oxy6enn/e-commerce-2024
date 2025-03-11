@@ -1,12 +1,13 @@
 // rafce
-import React from 'react'
+import React from "react";
+import FormProduct from "../../components/admin/FormProduct";
 
 const Product = () => {
   return (
     <div>
-Product
+      <FormProduct />
     </div>
-  )
-}
+  );
+};
 
-export default Product
+export default Product;
