@@ -1,6 +1,13 @@
 const prisma = require('../config/prisma')
 const cloudinary = require('cloudinary').v2
 
+   // Configuration
+   cloudinary.config({ 
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+    api_key: process.env.CLOUDINARY_API_KEY, 
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 
 exports.create = async (req, res) => {
     try {
@@ -13,7 +20,6 @@ exports.create = async (req, res) => {
                 price: parseFloat(price),
                 quantity: parseInt(quantity),
                 categoryId: parseInt(categoryId),
-                /// เดี๋ยวมาจ้า
                 images: {
                     create: images.map((item) => ({
                         asset_id: item.asset_id,
@@ -35,14 +41,15 @@ exports.create = async (req, res) => {
 exports.list = async (req, res) => {
     try {
         const { count } = req.params
-        const product = await prisma.product.findMany({
+        const products = await prisma.product.findMany({
             take: parseInt(count),
             orderBy: { createdAt: "desc" },
             include: {
-                category: true
+                category: true,
+                images: true
             }
         })
-        res.send(product)
+        res.send(products)
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: "Server Error" })
@@ -52,7 +59,7 @@ exports.list = async (req, res) => {
 exports.read = async (req, res) => {
     try {
         const { id } = req.params
-        const product = await prisma.product.findFirst({
+        const products = await prisma.product.findFirst({
             where: {
                 id: Number(id)
             },
@@ -61,7 +68,7 @@ exports.read = async (req, res) => {
                 images: true
             }
         })
-        res.send(product)
+        res.send(products)
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: "Server Error" })
@@ -112,10 +119,33 @@ exports.update = async (req, res) => {
 exports.remove = async (req, res) => {
     try {
         const { id } = req.params
-
+        
         // หนังชีวิต ต้องลบภาพ
-
-        const product = await prisma.product.delete({
+        // Step 1 ค้นหาสินค้า include images
+        const product = await prisma.product.findFirst({
+            where: { id: Number(id)},
+            include: { images: true }
+        })
+        if(!product){
+            return res.status(400).json({ message: "Product Not Found" })
+        }
+        console.log(product)
+        // Step 2 Promise ลบแบบ รอฉันด้วย
+        const deletedImage = product.images.map((image)=>
+        new Promise((resolve,reject)=>{
+            // ลบจาก cloud
+            cloudinary.uploader.destroy(image.public_id,(error,result)=>{
+                if(error){
+                    reject(error)
+                }else{
+                    resolve(result)
+                }
+            })
+        })
+        )
+        await Promise.all(deletedImage)
+        // Step 3 ลบสินค้า
+        await prisma.product.delete({
             where: {
                 id: parseInt(id)
             }
@@ -228,12 +258,7 @@ exports.searchFilters = async (req, res) => {
     }
 }
 
-   // Configuration
-   cloudinary.config({ 
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-    api_key: process.env.CLOUDINARY_API_KEY, 
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+
 
 exports.createImages = async (req, res) => {
     try{

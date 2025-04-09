@@ -37,6 +37,7 @@ const ecomStore = (set) => ({
   },
 });
 
+
 const usePersist = {
   name: "ecom-store",
   storage: createJSONStorage(() => localStorage),
