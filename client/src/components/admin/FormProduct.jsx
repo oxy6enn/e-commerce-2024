@@ -6,6 +6,7 @@ import { createProduct, deleteProduct } from "../../api/product";
 import { toast } from "react-toastify";
 import Uploadfile from "./Uploadfile";
 import { Link } from "react-router-dom";
+import { PackagePlus, Pencil , Trash2 } from 'lucide-react';
 
 const initialState = {
   title: "",
@@ -24,7 +25,14 @@ const FormProduct = () => {
   const products = useEcomStore((state) => state.products);
   console.log(products);
 
-  const [form, setForm] = useState(initialState);
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    price: 0,
+    quantity: 0,
+    categoryId: "",
+    images: [],
+  })
 
   useEffect(() => {
     //code
@@ -119,15 +127,15 @@ const FormProduct = () => {
         {/* uploadfile */}
         <Uploadfile form={form} setForm={setForm} />
 
-        <button className="bg-blue-500">เพิ่มสินค้า</button>
+        <button className="bg-blue-500 p-2 rounded-md shadow-md flex hover:scale-105 hover:-translate-y-1 hover:duration-200"> <PackagePlus /> เพิ่มสินค้า</button>
 
         <br />
         <hr />
         <br />
 
-        <table className="table">
+        <table className="table w-full border">
           <thead>
-            <tr>
+            <tr className="bg-gray-200 border">
               <th scope="col">#</th>
               <th scope="col">รูปสินค้า</th>
               <th scope="col">ชื่อสินค้า</th>
@@ -165,13 +173,17 @@ const FormProduct = () => {
                   <td>{item.sold}</td>
                   <td>{item.updatedAt}</td>
                   <td className="flex gap-2">
-                    <p className="bg-yellow-500 rounded-md p-1 shadow-md mx-2">
-                      <Link to={"/admin/product/" + item.id}>แก้ไข</Link>
+                    <p className="bg-yellow-500 rounded-md p-2 
+                    hover:scale-105 hover:-translate-y-1 hover:duration-200
+                    shadow-md mx-2">
+                      <Link to={"/admin/product/" + item.id}><Pencil /></Link>
                     </p>
                     <p 
-                    className="bg-red-500 rounded-md p-1 shadow-md mx-2"
+                    className="bg-red-500 rounded-md p-2 
+                    hover:scale-105 hover:-translate-y-1 hover:duration-200
+                    shadow-md mx-2"
                     onClick={()=>handleDelete(item.id)}
-                    >ลบ</p>
+                    ><Trash2 /></p>
                   </td>
                 </tr>
               );
